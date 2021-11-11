@@ -1,6 +1,7 @@
 # Teams Connector
 
 [![Gem Version](https://badge.fury.io/rb/teams_connector.svg)](https://badge.fury.io/rb/teams_connector)
+![RSpec](https://github.com/qurasoft/teams_connector/actions/workflows/ruby.yml/badge.svg)
 
 Welcome to Teams Connector. This gem allows you to easily send messages from your ruby project to Microsoft Teams channels.
 It integrates in your rails project, when you are using bundler or even in plain ruby projects.
@@ -53,6 +54,12 @@ Template name | Description
 -----|-------
 :test_card | A simple text message without any configurable content for testing
 :facts_card | A card with title, subtitle and a list of facts
+
+### Custom Templates
+
+Custom templates are stored in the directory specified by the configuration option `template_dir`. As an array of strings, describing the path relative to the project root. When using Rails or Bundler their root is used, otherwise it is the current working directory.
+
+Templates are json files with the extension `.json.erb`. The file is parsed and populated by the ruby ERB module.  
 
 ## Development
 
