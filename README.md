@@ -1,5 +1,7 @@
 # Teams Connector
 
+[![Gem Version](https://badge.fury.io/rb/teams_connector.svg)](https://badge.fury.io/rb/teams_connector)
+
 Welcome to Teams Connector. This gem allows you to easily send messages from your ruby project to Microsoft Teams channels.
 It integrates in your rails project, when you are using bundler or even in plain ruby projects.
 
