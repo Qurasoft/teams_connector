@@ -1,0 +1,18 @@
+{
+  "@type": "MessageCard",
+  "@context": "http://schema.org/extensions",
+  "themeColor": "<%= TeamsConnector.configuration.color %>>",
+  "summary": "<%= @summary %>",
+  "sections": [
+    {
+      "markdown": true,
+      "activityTitle": "<%= @content[:title] %>",
+      "activitySubtitle": "<%= @content[:subtitle] %>",
+      <% if @content[:facts].present? %>
+      "facts": [
+        <%= @content[:facts].map {|k| {name: k[0], value: k[1]}.to_json}.join(", ") %>
+      ]
+      <% end %>
+    }
+  ]
+}
