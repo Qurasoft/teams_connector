@@ -7,7 +7,7 @@ module TeamsConnector
   class Notification
     attr_accessor :template, :channel
 
-    def initialize(template, channel = TeamsConnector.configuration.default)
+    def initialize(template: nil, channel: TeamsConnector.configuration.default)
       @template = template
       @channel = channel
     end
@@ -24,14 +24,22 @@ module TeamsConnector
 
       content = renderer.result(binding)
 
-      puts content
-
       if TeamsConnector.configuration.method == :sidekiq
         TeamsConnector::PostWorker.perform_async(url, content)
       else
         response = Net::HTTP.post(URI(url), content, { "Content-Type": "application/json" })
         response.value
       end
+    end
+
+    def pretty_print
+      template_path = find_template
+
+      renderer = ERB.new(File.read(template_path))
+      renderer.location = [template_path.to_s, 0]
+      content = renderer.result(binding)
+
+      puts JSON.pretty_generate(JSON.parse(content))
     end
 
     private

@@ -12,7 +12,7 @@ RSpec.describe TeamsConnector::Notification do
     stub_request(:post, "default")
   end
 
-  subject { TeamsConnector::Notification.new(:test_card, :other) }
+  subject { TeamsConnector::Notification.new(template: :test_card, channel: :other) }
 
   it "initializes with template and channel" do
     expect(subject).to have_attributes(template: :test_card)
@@ -46,7 +46,7 @@ RSpec.describe TeamsConnector::Notification do
   end
 
   context "template not available" do
-    subject { TeamsConnector::Notification.new(:card_not_available, :other) }
+    subject { TeamsConnector::Notification.new(template: :card_not_available, channel: :other) }
 
     it "raises an error" do
       expect { subject.deliver_later }.to raise_error ArgumentError
@@ -57,7 +57,7 @@ RSpec.describe TeamsConnector::Notification do
   end
 
   context "channel not configured" do
-    subject { TeamsConnector::Notification.new(:test_card, :not_configured) }
+    subject { TeamsConnector::Notification.new(template: :test_card, channel: :not_configured) }
 
     it "raises an error" do
       expect { subject.deliver_later }.to raise_error ArgumentError
@@ -96,5 +96,30 @@ RSpec.describe TeamsConnector::Notification do
       expect(WebMock).to have_requested(:post, "http://localhost").with headers: { "Content-Type": "application/json" }
       expect(WebMock).not_to have_requested :post, "http://default"
     end
+  end
+
+  it "pretty prints the template" do
+    pretty_printed_template = <<HEREDOC
+{
+  "@type": "MessageCard",
+  "@context": "http://schema.org/extensions",
+  "themeColor": "3f95b5",
+  "summary": "This is a test summary",
+  "sections": [
+    {
+      "markdown": true,
+      "activityTitle": "Quokka",
+      "activitySubtitle": "About the short-tailed scrub wallaby",
+      "facts": [
+        {
+          "name": "Fun fact",
+          "value": "Are always smiling and the 'happiest' animals on earth."
+        }
+      ]
+    }
+  ]
+}
+HEREDOC
+    expect { subject.pretty_print }.to output(pretty_printed_template).to_stdout
   end
 end
