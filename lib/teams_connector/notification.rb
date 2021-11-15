@@ -1,4 +1,5 @@
 require 'erb'
+require 'json'
 require 'net/http'
 require 'teams_connector/post_worker' if defined? Sidekiq
 
@@ -6,7 +7,7 @@ module TeamsConnector
   class Notification
     attr_accessor :template, :channel
 
-    def initialize(template, channel)
+    def initialize(template, channel = TeamsConnector.configuration.default)
       @template = template
       @channel = channel
     end
@@ -22,6 +23,8 @@ module TeamsConnector
       raise ArgumentError, "The Teams channel '#{@channel}' is not available in the configuration." if url.nil?
 
       content = renderer.result(binding)
+
+      puts content
 
       if TeamsConnector.configuration.method == :sidekiq
         TeamsConnector::PostWorker.perform_async(url, content)
