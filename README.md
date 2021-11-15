@@ -52,18 +52,37 @@ This gem provides some basic templates in its default template path. You can als
 
 Template name | Description
 -----|-------
-:test_card | A simple text message without any configurable content for testing
+:adaptive_card | A card with the body of an adaptive card for more complex scenarios
 :facts_card | A card with title, subtitle and a list of facts
+:test_card | A simple text message without any configurable content for testing
 
 ### Custom Templates
 
 Custom templates are stored in the directory specified by the configuration option `template_dir`. As an array of strings, describing the path relative to the project root. When using Rails or Bundler their root is used, otherwise it is the current working directory.
 
-Templates are json files with the extension `.json.erb`. The file is parsed and populated by the ruby ERB module.  
+Templates are json files with the extension `.json.erb`. The file is parsed and populated by the ruby ERB module.
+
+### Builder
+
+You can use TeamsConnector::Builder to create Adaptive Cards directly in ruby. YOu can output the result of the builder as JSON for future use with `TeamsController::Notification::AdaptiveCard#pretty_print`.
+
+```ruby
+builder = TeamsConnector::Builder.container do |content|
+  content << TeamsConnector::Builder.text("This is an introductory text for the following facts")
+  content << TeamsConnector::Builder.facts { |facts|
+    facts["Usage"] = "Testing the adaptive card builder"
+    facts["Quokka fact"] = "They are funny little creatures"
+  }
+end
+
+TeamsConnector::Notification::AdaptiveCard.new(content: builder).deliver_later
+```
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+You can define the channels you use for testing in the file `bin/channels.yml` or directly in the `bin/console` script.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 

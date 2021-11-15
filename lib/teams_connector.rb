@@ -2,6 +2,8 @@ require 'teams_connector/configuration'
 require 'teams_connector/version'
 require 'teams_connector/notification'
 require 'teams_connector/notification/message'
+require 'teams_connector/notification/adaptive_card'
+require 'teams_connector/builder'
 
 module TeamsConnector
   class << self
