@@ -1,5 +1,9 @@
 # Teams Connector Changelog
 
+0.1.2
+---
+- Use `TeamsConnector::Configuration#load_from_rails_credentials` to load encrypted channel URLs in your Rails environment
+
 0.1.1
 ---
 - Adaptive Card Notification

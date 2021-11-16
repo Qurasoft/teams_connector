@@ -27,5 +27,16 @@ module TeamsConnector
     def channel(name, url)
       @channels[name] = url;
     end
+
+    def load_from_rails_credentials
+      unless defined? Rails
+        raise RuntimeError, "This method is only available in Ruby on Rails."
+      end
+
+      webhook_urls = Rails.application.credentials.teams_connector!
+      webhook_urls.each do |entry|
+        channel(entry[0], entry[1])
+      end
+    end
   end
 end

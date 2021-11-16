@@ -52,4 +52,42 @@ RSpec.describe TeamsConnector::Configuration do
       expect { subject.method = :invalid }.to raise_error ArgumentError
     end
   end
+
+  context "rails credentials" do
+    it "raises an error if Rails is not available" do
+      expect { subject.load_from_rails_credentials }.to raise_error RuntimeError
+    end
+
+    context "available" do
+      class RailsTest
+        class Credentials
+          def self.teams_connector!
+          end
+        end
+
+        class Application
+          def self.credentials
+            RailsTest::Credentials
+          end
+        end
+
+        def self.application
+          RailsTest::Application
+        end
+      end
+
+      it "loads channels from credentials" do
+        stub_const "Rails", RailsTest
+        allow(Rails.application.credentials).to receive(:"teams_connector!").and_return({
+                                                                                          credentials_default: "DEFAULT_TEST_URL",
+                                                                                          credentials_other: "OTHER_TEST_URL"
+                                                                                        })
+        subject.load_from_rails_credentials
+        expect(subject.channels).to include(
+                                      { credentials_default: "DEFAULT_TEST_URL" },
+                                      { credentials_other: "OTHER_TEST_URL" }
+                                    )
+      end
+    end
+  end
 end

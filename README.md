@@ -25,10 +25,10 @@ Or install it yourself as:
     $ gem install teams_connector
 
 ## Usage
-After setting up the Incoming Webhook Connector four your Microsoft Teams channel, it is as simple as configuring the channel and creating a new `TeamsConnector::Notification`.
+After setting up the Incoming Webhook Connector for your Microsoft Teams channel, it is as simple as configuring the channel and creating a new `TeamsConnector::Notification`.
 
 ```ruby
-# Configuration
+# TeamsConnector initializer
 TeamsConnector.configure do |config|
   config.channel :channel_id, "https://<YOUR COMPLETE WEBHOOK URL GOES HERE>"
 end
@@ -46,9 +46,38 @@ content = {
 }
 TeamsConnector::Notification::Message.new(:facts_card, "This is a summary", content).deliver_later
 ```
-This gem provides some basic templates in its default template path. You can also define your own templates in your own path. The default templates will be still available so you can mix and match.
 
-### Default templates
+### Secure Channel Configuration
+Since the Incoming Webhook Connector does not allow any authentication at the endpoint it is crucial that you keep your channel urls secret.
+At best nobody finds the url but it can also lead to spam or even faking of critical messages.
+
+In Rails provides the credentials functionality for [environmental security](https://edgeguides.rubyonrails.org/security.html#environmental-security). This mechanism can be used by TeamsConnector to load channels from an encrypted file. This also allows easy separation of production and development channel URLs.
+All channels are defined under the top-level entry `teams_connector` and will be identified by their key.
+```yaml
+# $ bin/rails credentials:edit
+teams_connector:
+  default: "<INSERT DEFAULT URL HERE>"
+  sales: "<INSERT URL FOR THE :sales CHANNEL HERE>"
+```
+
+After configuration of the credentials you can load the channels in your initializer.
+Since `#load_from_rails_configuration` is a wrapper around `#channel` both methods can be used together.
+
+```ruby
+# TeamsConnector initializer
+TeamsConnector.configure do |config|
+  config.load_from_rails_credentials
+  # After loading the :default channel is available and can be set as the default 
+  config.default = :default
+  config.channel :another_channel, "<URL>"
+end
+```
+
+### Templates
+This gem provides some basic templates in its default template path. You can also define your own templates in your own path.
+The default templates will be still available so you can mix and match.
+
+#### Default templates
 
 Template name | Description
 -----|-------
@@ -56,13 +85,13 @@ Template name | Description
 :facts_card | A card with title, subtitle and a list of facts
 :test_card | A simple text message without any configurable content for testing
 
-### Custom Templates
+#### Custom Templates
 
 Custom templates are stored in the directory specified by the configuration option `template_dir`. As an array of strings, describing the path relative to the project root. When using Rails or Bundler their root is used, otherwise it is the current working directory.
 
 Templates are json files with the extension `.json.erb`. The file is parsed and populated by the ruby ERB module.
 
-### Builder
+#### Builder
 
 You can use TeamsConnector::Builder to create Adaptive Cards directly in ruby. YOu can output the result of the builder as JSON for future use with `TeamsController::Notification::AdaptiveCard#pretty_print`.
 
