@@ -5,11 +5,11 @@ require 'teams_connector/post_worker' if defined? Sidekiq
 
 module TeamsConnector
   class Notification
-    attr_accessor :template, :channel
+    attr_accessor :template, :channels
 
-    def initialize(template: nil, channel: TeamsConnector.configuration.default)
+    def initialize(template: nil, channels: TeamsConnector.configuration.default)
       @template = template
-      @channel = channel
+      @channels = channels.instance_of?(Array) ? channels : [channels]
     end
 
     def deliver_later
@@ -18,17 +18,19 @@ module TeamsConnector
       renderer = ERB.new(File.read(template_path))
       renderer.location = [template_path.to_s, 0]
 
-      url = TeamsConnector.configuration.channels[@channel]
-      url = TeamsConnector.configuration.channels[TeamsConnector.configuration.default] if TeamsConnector.configuration.always_use_default
-      raise ArgumentError, "The Teams channel '#{@channel}' is not available in the configuration." if url.nil?
-
       content = renderer.result(binding)
 
-      if TeamsConnector.configuration.method == :sidekiq
-        TeamsConnector::PostWorker.perform_async(url, content)
-      else
-        response = Net::HTTP.post(URI(url), content, { "Content-Type": "application/json" })
-        response.value
+      channels = TeamsConnector.configuration.always_use_default ? [TeamsConnector.configuration.default] : @channels
+      channels.each do |channel|
+        url = TeamsConnector.configuration.channels[channel]
+        raise ArgumentError, "The Teams channel '#{channel}' is not available in the configuration." if url.nil?
+
+        if TeamsConnector.configuration.method == :sidekiq
+          TeamsConnector::PostWorker.perform_async(url, content)
+        else
+          response = Net::HTTP.post(URI(url), content, { "Content-Type": "application/json" })
+          response.value
+        end
       end
     end
 

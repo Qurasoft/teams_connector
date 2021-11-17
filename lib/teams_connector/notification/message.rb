@@ -3,7 +3,7 @@ module TeamsConnector
     attr_accessor :summary, :content
 
     def initialize(template, summary, content = {}, channel = TeamsConnector.configuration.default)
-      super(template: template, channel: channel)
+      super(template: template, channels: channel)
       @summary = summary
       @content = content
     end

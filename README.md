@@ -27,6 +27,8 @@ Or install it yourself as:
 ## Usage
 After setting up the Incoming Webhook Connector for your Microsoft Teams channel, it is as simple as configuring the channel and creating a new `TeamsConnector::Notification`.
 
+The `channels` parameter can either be a single channel identifier or an array of multiple channel identifiers, that each will receive the notification. 
+
 ```ruby
 # TeamsConnector initializer
 TeamsConnector.configure do |config|
@@ -34,7 +36,7 @@ TeamsConnector.configure do |config|
 end
 
 # Send a test card to your channel
-TeamsConnector::Notification.new(:test_card, :channel_id).deliver_later
+TeamsConnector::Notification.new(template: :test_card, channels: :channel_id).deliver_later
 
 # Send a card with a list of facts
 content = {

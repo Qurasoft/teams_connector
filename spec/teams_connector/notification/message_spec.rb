@@ -16,7 +16,7 @@ RSpec.describe TeamsConnector::Notification::Message do
   it "initializes with template, summary, content, and the default channel" do
     expect(subject).to be_a TeamsConnector::Notification
     expect(subject).to have_attributes(template: :test_card)
-    expect(subject).to have_attributes(channel: :default)
+    expect(subject).to have_attributes(channels: [:default])
     expect(subject).to have_attributes(summary: "Summary")
     expect(subject).to have_attributes(content: {})
   end
