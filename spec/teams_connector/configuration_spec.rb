@@ -43,6 +43,11 @@ RSpec.describe TeamsConnector::Configuration do
       expect(subject.method).to eq :sidekiq
     end
 
+    it "supports testing" do
+      subject.method = :testing
+      expect(subject.method).to eq :testing
+    end
+
     it "does not allow sidekiq when it is not available" do
       hide_const("Sidekiq")
       expect { subject.method = :sidekiq }.to raise_error ArgumentError

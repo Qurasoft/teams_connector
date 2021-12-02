@@ -102,11 +102,36 @@ RSpec.describe TeamsConnector::Notification do
       Sidekiq::Testing.inline!
     end
 
-    it "" do
+    it "delivers notifications" do
       subject.deliver_later
 
       expect(WebMock).to have_requested(:post, "http://localhost").with headers: { "Content-Type": "application/json" }
       expect(WebMock).not_to have_requested :post, "http://default"
+    end
+  end
+
+  context "testing" do
+    before :each do
+      TeamsConnector.reset_testing
+      TeamsConnector.configure do |config|
+        config.method = :testing
+      end
+    end
+
+    it "does not deliver http requests" do
+      subject.deliver_later
+
+      expect(WebMock).not_to have_requested :post, "http://localhost"
+      expect(WebMock).not_to have_requested :post, "http://default"
+      expect(WebMock).not_to have_requested :post, "http://another"
+    end
+
+    it "adds the request to the request list" do
+      expect(TeamsConnector.testing.requests.count).to eq 0
+
+      subject.deliver_later
+
+      expect(TeamsConnector.testing.requests.count).to eq 1
     end
   end
 

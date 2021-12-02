@@ -11,7 +11,7 @@ RSpec.describe TeamsConnector do
       is_expected.to be TeamsConnector.configuration
     end
 
-    it "has a static configuration that can be reset" do
+    it "can be reset" do
       old_configuration = TeamsConnector.configuration
       TeamsConnector.reset
       new_configuration = TeamsConnector.configuration
@@ -25,6 +25,25 @@ RSpec.describe TeamsConnector do
   context "#configure" do
     it "yields the configuration" do
       expect { |b| TeamsConnector.configure &b }.to yield_with_args TeamsConnector.configuration
+    end
+  end
+
+  context "testing" do
+    subject { TeamsConnector.testing }
+
+    it "is a singleton" do
+      is_expected.to be_a TeamsConnector::Testing
+      is_expected.to be TeamsConnector.testing
+    end
+
+    it "can be reset" do
+      old_testing = TeamsConnector.testing
+      TeamsConnector.reset_testing
+      new_testing = TeamsConnector.testing
+
+      expect(old_testing).to be_a TeamsConnector::Testing
+      expect(new_testing).to be_a TeamsConnector::Testing
+      expect(old_testing).not_to be new_testing
     end
   end
 

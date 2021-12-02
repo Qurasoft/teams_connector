@@ -1,5 +1,9 @@
 # Teams Connector Changelog
 
+0.1.4
+---
+- Add rudimentary testing method
+
 0.1.3
 ---
 - Allow sending a notification to multiple channels at the same time

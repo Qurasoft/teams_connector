@@ -7,7 +7,7 @@ require 'teams_connector/builder'
 
 module TeamsConnector
   class << self
-    attr_accessor :configuration
+    attr_accessor :configuration, :testing
   end
 
   def self.configuration
@@ -20,6 +20,16 @@ module TeamsConnector
 
   def self.configure
     yield configuration
+  end
+
+  def self.testing
+    require 'teams_connector/testing'
+    @testing ||= Testing.new
+  end
+
+  def self.reset_testing
+    require 'teams_connector/testing'
+    @testing = Testing.new
   end
 
   def self.project_root

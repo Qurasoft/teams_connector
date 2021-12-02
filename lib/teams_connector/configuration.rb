@@ -19,7 +19,7 @@ module TeamsConnector
     end
 
     def method=(method)
-      raise ArgumentError, "Method '#{method.to_s}' is not supported" unless [:direct, :sidekiq].include? method
+      raise ArgumentError, "Method '#{method.to_s}' is not supported" unless [:direct, :sidekiq, :testing].include? method
       raise ArgumentError, "Sidekiq is not available" if method == :sidekiq && !defined? Sidekiq
       @method = method
     end

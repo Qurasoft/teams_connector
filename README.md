@@ -109,6 +109,21 @@ end
 TeamsConnector::Notification::AdaptiveCard.new(content: builder).deliver_later
 ```
 
+## Testing
+
+To test TeamsConnector integration in your application you can use the `:testing` method.
+Instead of performing real HTTP requests, an array in `TeamsConnector.testing.requests` is filled in chronological order.
+
+The request elements have the following structure:
+```ruby
+{
+  channel: :default,
+  template: :facts_card,
+  content: "rendered content",
+  time: Time.now
+}
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

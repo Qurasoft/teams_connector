@@ -27,6 +27,8 @@ module TeamsConnector
 
         if TeamsConnector.configuration.method == :sidekiq
           TeamsConnector::PostWorker.perform_async(url, content)
+        elsif TeamsConnector.configuration.method == :testing
+          TeamsConnector.testing.perform_request channel, @template, content
         else
           response = Net::HTTP.post(URI(url), content, { "Content-Type": "application/json" })
           response.value
