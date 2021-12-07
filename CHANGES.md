@@ -1,5 +1,12 @@
 # Teams Connector Changelog
 
+0.1.5
+---
+- RSpec Matchers for testing
+- README update for testing
+- Use sometimes testing mode internally
+- Fixed code smells
+
 0.1.4
 ---
 - Add rudimentary testing method

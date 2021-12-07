@@ -2,6 +2,7 @@ require "bundler/setup"
 require 'webmock/rspec'
 require 'sidekiq'
 require "teams_connector"
+require "teams_connector/rspec"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

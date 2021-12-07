@@ -3,7 +3,7 @@ module TeamsConnector
     attr_accessor :content
 
     def initialize(template: :adaptive_card, content: {}, channel: TeamsConnector.configuration.default)
-      super(template: template, channel: channel)
+      super(template: template, channels: channel)
       if content.instance_of? TeamsConnector::Builder
         @content = {
           card: [content.result]

@@ -112,18 +112,62 @@ TeamsConnector::Notification::AdaptiveCard.new(content: builder).deliver_later
 ## Testing
 
 To test TeamsConnector integration in your application you can use the `:testing` method.
-Instead of performing real HTTP requests, an array in `TeamsConnector.testing.requests` is filled in chronological order.
+Instead of performing real HTTP requests, an array in `TeamsConnector.testing.requests` is filled with your notifications in chronological order.
 
 The request elements have the following structure:
 ```ruby
 {
   channel: :default,
   template: :facts_card,
-  content: "rendered content",
+  content: '{"rendered content": "in JSON format"}',
   time: Time.now
 }
 ```
 
+### RSpec Matcher
+TeamsConnector provides the `have_sent_notification_to(channel = nil)` matcher for RSpec.
+It is available by adding `require "teams_connector/rspec"` to your `spec_helper.rb`.
+
+```ruby
+it "has sent exactly one notification to the channel" do
+  expect { notification.deliver_later }.to have_sent_notification_to(:channel)
+end
+```
+
+If no specific channel is given, it matches all. 
+There exists the alias `send_notification_to` for `have_sent_notification_to`.
+
+#### Matching number of notifications
+By default `have_sent_notification_to` expects exactly one matching notification.
+You can change the expected amount by chaining `exactly`, `at_least` or `at_most`.
+
+Example:
+```ruby
+it "has sent less than 10 notifications to the channel" do
+  expect { notification.deliver_later }.to have_sent_notification_to(:channel).at_most(10)
+end
+```
+
+You can also use `once`, `twice` and `thrice` as an alias for `exactly(1..3)`.
+
+#### Expecting templates
+To expect a template, you can chain with `with_template(:template)`.
+
+#### Expecting content
+To expect specific content, you can chain with `with(data = nil, &block)`.
+Data supports other RSpec matchers like `hash_including`.
+The block is called for every notification with the notification content hash and the raw notification itself.
+
+Example:
+```ruby
+expect {
+  notification(:default, :test_card).deliver_later
+}.to have_sent_notification_to(:default).with { |content, notification|
+  expect(notification[:channel]).to eq :default
+  expect(notification[:template]).to eq :test_card
+  expect(content["sections"]).to include(hash_including("activityTitle", "activitySubtitle", "facts", "markdown" => true))
+}
+```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
