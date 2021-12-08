@@ -125,8 +125,10 @@ The request elements have the following structure:
 ```
 
 ### RSpec Matcher
-TeamsConnector provides the `have_sent_notification_to(channel = nil)` matcher for RSpec.
+TeamsConnector provides the `have_sent_notification_to(channel = nil, template = nil)` matcher for RSpec.
 It is available by adding `require "teams_connector/rspec"` to your `spec_helper.rb`.
+The matcher supports filtering notifications by channel and template. If one is not given, it does not filter the notifications by it.
+There exists the alias `send_notification_to` for `have_sent_notification_to`.
 
 ```ruby
 it "has sent exactly one notification to the channel" do
@@ -134,10 +136,7 @@ it "has sent exactly one notification to the channel" do
 end
 ```
 
-If no specific channel is given, it matches all. 
-There exists the alias `send_notification_to` for `have_sent_notification_to`.
-
-#### Matching number of notifications
+#### Expecting number of notifications
 By default `have_sent_notification_to` expects exactly one matching notification.
 You can change the expected amount by chaining `exactly`, `at_least` or `at_most`.
 
@@ -149,9 +148,11 @@ end
 ```
 
 You can also use `once`, `twice` and `thrice` as an alias for `exactly(1..3)`.
+For more readable expectations `times` can be chained.
 
 #### Expecting templates
-To expect a template, you can chain with `with_template(:template)`.
+The template argument in the matcher does filter the notifications.
+If you expect a template instead, you can chain with `with_template(:template)`.
 
 #### Expecting content
 To expect specific content, you can chain with `with(data = nil, &block)`.

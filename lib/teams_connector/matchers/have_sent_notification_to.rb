@@ -3,9 +3,12 @@ module TeamsConnector
     class HaveSentNotificationTo
       include RSpec::Matchers::Composable
 
-      def initialize(channel)
-        @channel = channel
-        @block = proc { }
+      def initialize(channel, template)
+        @filter = {
+          channel: channel,
+          template: template
+        }
+        @block = proc {}
         @data = nil
         @template_data = nil
         set_expected_number(:exactly, 1)
@@ -56,7 +59,10 @@ module TeamsConnector
       def failure_message
         "expected to send #{base_message}".tap do |msg|
           if @unmatching_ntfcts.any?
-            msg << "\nSent notifications to #{@channel}:"
+            msg << "\nSent notifications"
+            msg << " to #{@filter[:channel]}" if @filter[:channel]
+            msg << " of #{@filter[:template]}" if @filter[:template]
+            msg << ":"
             @unmatching_ntfcts.each do |data|
               msg << "\n   #{data}"
             end
@@ -77,7 +83,9 @@ module TeamsConnector
           in_block_notifications = expectation
         end
 
-        in_block_notifications = in_block_notifications.select {|msg| msg[:channel] === @channel} unless @channel.nil?
+        in_block_notifications = in_block_notifications.select { |msg|
+          @filter.map { |k, v| msg[k] === v unless v.nil? }.compact.all?
+        }
 
         check(in_block_notifications)
       end
@@ -126,9 +134,11 @@ module TeamsConnector
       end
 
       def base_message
-        "#{message_expectation_modifier} #{@expected_number} notifications to #{@channel}".tap do |msg|
-          msg << " with template #{@template_data}" unless @template_data.nil?
-          msg << " with content #{data_description(@data)}" unless @data.nil?
+        "#{message_expectation_modifier} #{@expected_number} notifications".tap do |msg|
+          msg << " to #{@filter[:channel]}" if @filter[:channel]
+          msg << " of #{@filter[:template]}" if @filter[:template]
+          msg << " with template #{@template_data}" if @template_data
+          msg << " with content #{data_description(@data)}" if @data
           msg << ", but sent #{@matching_count}"
         end
       end

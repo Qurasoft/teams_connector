@@ -2,9 +2,9 @@
 
 0.1.5
 ---
-- RSpec Matchers for testing
+- RSpec Matchers for testing, thanks to [rspec-rails](https://github.com/rspec/rspec-rails) for their ActionCable `have_broadcasted_to` matcher as reference
 - README update for testing
-- Use sometimes testing mode internally
+- Sometimes use testing mode internally
 - Fixed code smells
 
 0.1.4

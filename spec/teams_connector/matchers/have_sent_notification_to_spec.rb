@@ -48,6 +48,10 @@ RSpec.describe TeamsConnector::Matchers::HaveSentNotificationTo do
         notification(:test_card, :default)
         notification(:test_card, :other)
       }.to have_sent_notification_to(:default)
+
+      expect {
+        notification(:test_card, [:default, :other])
+      }.to have_sent_notification_to(:default)
     end
 
     it "passes when chained" do
@@ -166,6 +170,77 @@ RSpec.describe TeamsConnector::Matchers::HaveSentNotificationTo do
         expect(notification[:template]).to eq :test_card
         expect(content["sections"]).to include(hash_including("activityTitle", "activitySubtitle", "facts", "markdown" => true))
       }
+    end
+
+    describe "with template filter" do
+      before :all do
+        TeamsConnector.configure do |config|
+          config.template_dir = %w[spec templates]
+        end
+      end
+
+      it "passes with default notification count (exactly one)" do
+        expect {
+          notification(:test_card, :default)
+        }.to have_sent_notification_to(nil, :test_card)
+      end
+
+      it "passes for alias" do
+        expect {
+          notification(:test_card, :default)
+        }.to send_notification_to(nil, :test_card)
+      end
+
+      it "passes when negated" do
+        expect {}.not_to have_sent_notification_to(nil, :test_card)
+      end
+
+
+      it "counts only notifications sent with the template" do
+        expect {
+          notification(:spec_card, :default)
+          notification(:test_card, :default)
+        }.to have_sent_notification_to(nil, :test_card)
+      end
+
+      it "counts only notifications sent to the channel" do
+        expect {
+          notification(:test_card, :default)
+          notification(:test_card, :other)
+        }.to have_sent_notification_to(:default, :test_card)
+      end
+
+      it "passes when chained" do
+        expect {
+          notification(:test_card, :default)
+          notification(:spec_card, :other)
+        }.to have_sent_notification_to(:default, :test_card).and have_sent_notification_to(:other, :spec_card)
+      end
+
+      it "passes when combined with a template expectation" do
+        expect {
+          notification(:test_card, :default)
+          notification(:spec_card, :other)
+        }.to have_sent_notification_to(:default, :test_card).with_template(:test_card)
+      end
+
+      it "fails when too many notifications are sent" do
+        expect {
+          expect {
+            notification(:test_card, :default)
+            notification(:test_card, :default)
+          }.to have_sent_notification_to(nil, :test_card)
+        }.to raise_error(/expected to send exactly 1 notifications of test_card, but sent 2/)
+      end
+
+      it "fails when too many notifications are sent" do
+        expect {
+          expect {
+            notification(:test_card, :default)
+            notification(:test_card, :default)
+          }.to have_sent_notification_to(:default, :test_card)
+        }.to raise_error(/expected to send exactly 1 notifications to default of test_card, but sent 2/)
+      end
     end
   end
 end
