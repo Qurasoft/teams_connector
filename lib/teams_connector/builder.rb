@@ -40,23 +40,37 @@ module TeamsConnector
     def result
       case @type
       when :container
-        {
-          type: 'Container',
-          items: @content.map(&:result)
-        }
+        result_container
       when :facts
-        {
-          type: 'FactSet',
-          facts: @content.map { |fact| { title: fact[0], value: fact[1] } }
-        }
+        result_facts
       when :text
-        {
-          type: 'TextBlock',
-          text: @content
-        }
+        result_text
       else
         raise TypeError, "The type #{@type} is not supported by the TeamsConnector::Builder"
       end
+    end
+
+    private
+
+    def result_container
+      {
+        type: 'Container',
+        items: @content.map(&:result)
+      }
+    end
+
+    def result_facts
+      {
+        type: 'FactSet',
+        facts: @content.map { |fact| { title: fact[0], value: fact[1] } }
+      }
+    end
+
+    def result_text
+      {
+        type: 'TextBlock',
+        text: @content
+      }
     end
   end
 end
