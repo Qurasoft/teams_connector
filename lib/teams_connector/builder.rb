@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TeamsConnector
   class Builder
     attr_accessor :type, :content
@@ -39,17 +41,17 @@ module TeamsConnector
       case @type
       when :container
         {
-          type: "Container",
+          type: 'Container',
           items: @content.map { |element| element.result }
         }
       when :facts
         {
-          type: "FactSet",
+          type: 'FactSet',
           facts: @content.map { |fact| { title: fact[0], value: fact[1] } }
         }
       when :text
         {
-          type: "TextBlock",
+          type: 'TextBlock',
           text: @content
         }
       else

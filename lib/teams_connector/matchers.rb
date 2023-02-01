@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'teams_connector/matchers/have_sent_notification_to'
 
 module TeamsConnector

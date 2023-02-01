@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TeamsConnector
   module Matchers
     class HaveSentNotificationTo
@@ -62,7 +64,7 @@ module TeamsConnector
             msg << "\nSent notifications"
             msg << " to #{@filter[:channel]}" if @filter[:channel]
             msg << " of #{@filter[:template]}" if @filter[:template]
-            msg << ":"
+            msg << ':'
             @unmatching_ntfcts.each do |data|
               msg << "\n   #{data}"
             end
@@ -145,9 +147,9 @@ module TeamsConnector
 
       def message_expectation_modifier
         case @expectation_type
-        when :exactly then "exactly"
-        when :at_most then "at most"
-        when :at_least then "at least"
+        when :exactly then 'exactly'
+        when :at_most then 'at most'
+        when :at_least then 'at least'
         end
       end
 

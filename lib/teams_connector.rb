@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'teams_connector/configuration'
 require 'teams_connector/version'
 require 'teams_connector/notification'
@@ -45,7 +47,7 @@ module TeamsConnector
   end
 
   def self.gem_root
-    spec = Gem::Specification.find_by_name("teams_connector")
+    spec = Gem::Specification.find_by_name('teams_connector')
     spec.gem_dir rescue project_root
   end
 end

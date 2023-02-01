@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TeamsConnector
   class Testing
     attr_reader :requests

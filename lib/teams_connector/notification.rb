@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'erb'
 require 'json'
 require 'net/http'
@@ -30,7 +32,7 @@ module TeamsConnector
         elsif TeamsConnector.configuration.method == :testing
           TeamsConnector.testing.perform_request channel, @template, content
         else
-          response = Net::HTTP.post(URI(url), content, { "Content-Type" => "application/json" })
+          response = Net::HTTP.post(URI(url), content, { 'Content-Type' => 'application/json' })
           response.value
         end
       end

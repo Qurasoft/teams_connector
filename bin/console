@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require "bundler/setup"
-require "teams_connector"
+require 'bundler/setup'
+require 'teams_connector'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
@@ -11,26 +12,26 @@ require "teams_connector"
 # Pry.start
 
 TeamsConnector.configure do |config|
-  if File.exist?("channels.yml")
+  if File.exist?('channels.yml')
     # NOTE(Keune): The channels available in the console can be set in the file channels.yml. It contains a simple
     # mapping of channel identifiers to webhook URLs. The channel identifier is loaded as a symbol.
     #
     # Example: default: "<INSERT YOUR WEBHOOK URL HERE>"
-    puts "Load channels specified by file"
+    puts 'Load channels specified by file'
 
-    require "yaml"
-    channels = YAML.load_file "channels.yml"
+    require 'yaml'
+    channels = YAML.load_file 'channels.yml'
     channels.each do |k, v|
       config.channel k.to_sym, v
     end
   else
     # NOTE(Keune): Specify the channels you want to have available in the console
-    config.channel :default, "<INSERT YOUR WEBHOOK URL HERE>"
+    config.channel :default, '<INSERT YOUR WEBHOOK URL HERE>'
   end
   config.default = :default
   config.always_use_default = true
   config.method = :direct
 end
 
-require "irb"
+require 'irb'
 IRB.start(__FILE__)

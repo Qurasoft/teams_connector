@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TeamsConnector
   class Notification::AdaptiveCard < Notification
     attr_accessor :content
