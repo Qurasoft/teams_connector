@@ -16,17 +16,20 @@ RSpec.describe TeamsConnector::Builder do
   end
 
   describe 'container helper' do
-    subject { TeamsConnector::Builder.container { |items|
-      items << TeamsConnector::Builder.text('Container Test Text')
-      items << TeamsConnector::Builder.text('Container Test Text #2')
-    } }
+    subject do
+      TeamsConnector::Builder.container do |items|
+        items << TeamsConnector::Builder.text('Container Test Text')
+        items << TeamsConnector::Builder.text('Container Test Text #2')
+      end
+    end
 
     it 'creates a container with the specified items' do
-      is_expected.to have_attributes type: :container,
-                                     content: match_array([
-                                                            have_attributes(type: :text, content: 'Container Test Text'),
-                                                            have_attributes(type: :text, content: 'Container Test Text #2')
-                                                          ])
+      is_expected
+        .to have_attributes type: :container,
+                            content: match_array([
+                                                   have_attributes(type: :text, content: 'Container Test Text'),
+                                                   have_attributes(type: :text, content: 'Container Test Text #2')
+                                                 ])
     end
   end
 
@@ -39,14 +42,14 @@ RSpec.describe TeamsConnector::Builder do
   end
 
   describe 'result' do
-    subject {
-      TeamsConnector::Builder.container { |items|
+    subject do
+      TeamsConnector::Builder.container do |items|
         items << TeamsConnector::Builder.text('Test Text')
-        items << TeamsConnector::Builder.facts { |facts|
+        items << TeamsConnector::Builder.facts do |facts|
           facts['First Fact'] = 'First Fact Text'
-        }
-      }.result
-    }
+        end
+      end.result
+    end
 
     it 'gives the result as a hash translated to Adaptive Card syntax' do
       is_expected.to match type: 'Container',

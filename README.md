@@ -125,25 +125,25 @@ The request elements have the following structure:
 ```
 
 ### RSpec Matcher
-TeamsConnector provides the `have_sent_notification_to(channel = nil, template = nil)` matcher for RSpec.
+TeamsConnector provides the `sent_notification_to?(channel = nil, template = nil)` matcher for RSpec.
 It is available by adding `require "teams_connector/rspec"` to your `spec_helper.rb`.
 The matcher supports filtering notifications by channel and template. If one is not given, it does not filter the notifications by it.
-There exists the alias `send_notification_to` for `have_sent_notification_to`.
+There exists the alias `send_notification_to` and `have_sent_notification_to` for `sent_notification_to?`.
 
 ```ruby
 it "has sent exactly one notification to the channel" do
-  expect { notification.deliver_later }.to have_sent_notification_to(:channel)
+  expect { notification.deliver_later }.to sent_notification_to?(:channel)
 end
 ```
 
 #### Expecting number of notifications
-By default `have_sent_notification_to` expects exactly one matching notification.
+By default `sent_notification_to?` expects exactly one matching notification.
 You can change the expected amount by chaining `exactly`, `at_least` or `at_most`.
 
 Example:
 ```ruby
 it "has sent less than 10 notifications to the channel" do
-  expect { notification.deliver_later }.to have_sent_notification_to(:channel).at_most(10)
+  expect { notification.deliver_later }.to sent_notification_to?(:channel).at_most(10)
 end
 ```
 
@@ -163,7 +163,7 @@ Example:
 ```ruby
 expect {
   notification(:default, :test_card).deliver_later
-}.to have_sent_notification_to(:default).with { |content, notification|
+}.to sent_notification_to?(:default).with { |content, notification|
   expect(notification[:channel]).to eq :default
   expect(notification[:template]).to eq :test_card
   expect(content["sections"]).to include(hash_including("activityTitle", "activitySubtitle", "facts", "markdown" => true))

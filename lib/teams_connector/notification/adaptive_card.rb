@@ -7,13 +7,14 @@ module TeamsConnector
 
       def initialize(template: :adaptive_card, content: {}, channel: TeamsConnector.configuration.default)
         super(template: template, channels: channel)
-        if content.instance_of? TeamsConnector::Builder
-          @content = {
-            card: [content.result]
-          }
-        else
-          @content = content
-        end
+        @content =
+          if content.instance_of? TeamsConnector::Builder
+            {
+              card: [content.result]
+            }
+          else
+            content
+          end
       end
     end
   end

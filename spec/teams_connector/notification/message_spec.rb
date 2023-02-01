@@ -23,9 +23,12 @@ RSpec.describe TeamsConnector::Notification::Message do
   end
 
   it 'sends a notification with the content' do
-    expect { subject.deliver_later }.to have_sent_notification_to(:default).with_template(:test_card).with { |content|
-      expect(content['summary']).to eq 'This is a test summary'
-      expect(content['sections']).to include(hash_including('facts', 'markdown' => true, 'activityTitle' => 'Quokka', 'activitySubtitle' => 'About the short-tailed scrub wallaby'))
-    }
+    expect { subject.deliver_later }.to(
+      sent_notification_to?(:default).with_template(:test_card).with do |content|
+        expect(content['summary']).to eq 'This is a test summary'
+        expect(content['sections'])
+          .to include(hash_including('facts', 'markdown' => true, 'activityTitle' => 'Quokka', 'activitySubtitle' => 'About the short-tailed scrub wallaby'))
+      end
+    )
   end
 end

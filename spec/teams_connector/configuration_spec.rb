@@ -34,7 +34,7 @@ RSpec.describe TeamsConnector::Configuration do
 
   it 'has a function to add a channel' do
     expect(subject.channels).to be_empty
-    expect { subject.channel :default, 'https://test.url/' }.to change { subject.channels }
+    expect { subject.channel :default, 'https://test.url/' }.to(change { subject.channels })
     expect(subject.channels.count).to eq 1
     expect(subject.channels).to include :default
   end
@@ -84,10 +84,11 @@ RSpec.describe TeamsConnector::Configuration do
     context 'available' do
       it 'loads channels from credentials' do
         stub_const 'Rails', RailsTest
-        allow(Rails.application.credentials).to receive(:"teams_connector!").and_return({
-                                                                                          credentials_default: 'DEFAULT_TEST_URL',
-                                                                                          credentials_other: 'OTHER_TEST_URL'
-                                                                                        })
+        allow(Rails.application.credentials)
+          .to receive(:"teams_connector!").and_return({
+                                                        credentials_default: 'DEFAULT_TEST_URL',
+                                                        credentials_other: 'OTHER_TEST_URL'
+                                                      })
         subject.load_from_rails_credentials
         expect(subject.channels).to include(
                                       { credentials_default: 'DEFAULT_TEST_URL' },

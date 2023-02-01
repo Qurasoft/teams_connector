@@ -26,7 +26,7 @@ RSpec.describe TeamsConnector do
 
   context '#configure' do
     it 'yields the configuration' do
-      expect { |b| TeamsConnector.configure &b }.to yield_with_args TeamsConnector.configuration
+      expect { |b| TeamsConnector.configure(&b) }.to yield_with_args TeamsConnector.configuration
     end
   end
 

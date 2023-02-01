@@ -51,9 +51,9 @@ module TeamsConnector
     private
 
     def find_template
-      path = File.join(TeamsConnector::project_root, *TeamsConnector.configuration.template_dir, "#{@template.to_s}.json.erb")
+      path = File.join(TeamsConnector::project_root, *TeamsConnector.configuration.template_dir, "#{@template}.json.erb")
       unless File.exist? path
-        path = File.join(TeamsConnector::gem_root, *TeamsConnector::Configuration::DEFAULT_TEMPLATE_DIR, "#{@template.to_s}.json.erb")
+        path = File.join(TeamsConnector::gem_root, *TeamsConnector::Configuration::DEFAULT_TEMPLATE_DIR, "#{@template}.json.erb")
       end
       raise ArgumentError, "The template '#{@template}' is not available." unless File.exist? path
 
