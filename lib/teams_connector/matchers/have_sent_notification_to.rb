@@ -59,17 +59,18 @@ module TeamsConnector
       end
 
       def failure_message
-        "expected to send #{base_message}".tap do |msg|
-          if @unmatching_ntfcts.any?
-            msg << "\nSent notifications"
-            msg << " to #{@filter[:channel]}" if @filter[:channel]
-            msg << " of #{@filter[:template]}" if @filter[:template]
-            msg << ':'
-            @unmatching_ntfcts.each do |data|
-              msg << "\n   #{data}"
-            end
+        msg = "expected to send #{base_message}"
+        if @unmatching_ntfcts.any?
+          msg += "\nSent notifications"
+          msg += " to #{@filter[:channel]}" if @filter[:channel]
+          msg += " of #{@filter[:template]}" if @filter[:template]
+          msg += ':'
+          @unmatching_ntfcts.each do |data|
+            msg += "\n   #{data}"
           end
         end
+
+        msg
       end
 
       def failure_message_when_negated
