@@ -85,9 +85,9 @@ module TeamsConnector
           in_block_notifications = expectation
         end
 
-        in_block_notifications = in_block_notifications.select { |msg|
+        in_block_notifications = in_block_notifications.select do |msg|
           @filter.map { |k, v| msg[k] === v unless v.nil? }.compact.all?
-        }
+        end
 
         check(in_block_notifications)
       end
@@ -136,13 +136,14 @@ module TeamsConnector
       end
 
       def base_message
-        "#{message_expectation_modifier} #{@expected_number} notifications".tap do |msg|
-          msg << " to #{@filter[:channel]}" if @filter[:channel]
-          msg << " of #{@filter[:template]}" if @filter[:template]
-          msg << " with template #{@template_data}" if @template_data
-          msg << " with content #{data_description(@data)}" if @data
-          msg << ", but sent #{@matching_count}"
-        end
+        msg = String("#{message_expectation_modifier} #{@expected_number} notifications")
+        msg << " to #{@filter[:channel]}" if @filter[:channel]
+        msg << " of #{@filter[:template]}" if @filter[:template]
+        msg << " with template #{@template_data}" if @template_data
+        msg << " with content #{data_description(@data)}" if @data
+        msg << ", but sent #{@matching_count}"
+
+        msg
       end
 
       def message_expectation_modifier

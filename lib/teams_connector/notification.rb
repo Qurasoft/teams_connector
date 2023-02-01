@@ -27,9 +27,10 @@ module TeamsConnector
         url = TeamsConnector.configuration.channels[channel]
         raise ArgumentError, "The Teams channel '#{channel}' is not available in the configuration." if url.nil?
 
-        if TeamsConnector.configuration.method == :sidekiq
+        case TeamsConnector.configuration.method
+        when :sidekiq
           TeamsConnector::PostWorker.perform_async(url, content)
-        elsif TeamsConnector.configuration.method == :testing
+        when :testing
           TeamsConnector.testing.perform_request channel, @template, content
         else
           response = Net::HTTP.post(URI(url), content, { 'Content-Type' => 'application/json' })
@@ -51,10 +52,10 @@ module TeamsConnector
     private
 
     def find_template
-      path = File.join(TeamsConnector::project_root, *TeamsConnector.configuration.template_dir, "#{@template}.json.erb")
-      unless File.exist? path
-        path = File.join(TeamsConnector::gem_root, *TeamsConnector::Configuration::DEFAULT_TEMPLATE_DIR, "#{@template}.json.erb")
-      end
+      path = File.join(TeamsConnector.project_root, *TeamsConnector.configuration.template_dir, "#{@template}.json.erb")
+      return path if File.exist? path
+
+      path = File.join(TeamsConnector.gem_root, *TeamsConnector::Configuration::DEFAULT_TEMPLATE_DIR, "#{@template}.json.erb")
       raise ArgumentError, "The template '#{@template}' is not available." unless File.exist? path
 
       path
