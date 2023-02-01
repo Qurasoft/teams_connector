@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'erb'
 require 'json'
 require 'net/http'
@@ -22,17 +24,7 @@ module TeamsConnector
 
       channels = TeamsConnector.configuration.always_use_default ? [TeamsConnector.configuration.default] : @channels
       channels.each do |channel|
-        url = TeamsConnector.configuration.channels[channel]
-        raise ArgumentError, "The Teams channel '#{channel}' is not available in the configuration." if url.nil?
-
-        if TeamsConnector.configuration.method == :sidekiq
-          TeamsConnector::PostWorker.perform_async(url, content)
-        elsif TeamsConnector.configuration.method == :testing
-          TeamsConnector.testing.perform_request channel, @template, content
-        else
-          response = Net::HTTP.post(URI(url), content, { "Content-Type" => "application/json" })
-          response.value
-        end
+        deliver_channel(channel, content)
       end
     end
 
@@ -48,11 +40,26 @@ module TeamsConnector
 
     private
 
-    def find_template
-      path = File.join(TeamsConnector::project_root, *TeamsConnector.configuration.template_dir, "#{@template.to_s}.json.erb")
-      unless File.exist? path
-        path = File.join(TeamsConnector::gem_root, *TeamsConnector::Configuration::DEFAULT_TEMPLATE_DIR, "#{@template.to_s}.json.erb")
+    def deliver_channel(channel, content)
+      url = TeamsConnector.configuration.channels[channel]
+      raise ArgumentError, "The Teams channel '#{channel}' is not available in the configuration." if url.nil?
+
+      case TeamsConnector.configuration.method
+      when :sidekiq then TeamsConnector::PostWorker.perform_async(url, content)
+      when :testing then TeamsConnector.testing.perform_request channel, @template, content
+      else
+        response = Net::HTTP.post(URI(url), content, { 'Content-Type' => 'application/json' })
+        response.value
       end
+    end
+
+    def find_template
+      path = File.join(TeamsConnector.project_root, *TeamsConnector.configuration.template_dir, "#{@template}.json.erb")
+      return path if File.exist? path
+
+      path = File.join(TeamsConnector.gem_root,
+                       *TeamsConnector::Configuration::DEFAULT_TEMPLATE_DIR,
+                       "#{@template}.json.erb")
       raise ArgumentError, "The template '#{@template}' is not available." unless File.exist? path
 
       path

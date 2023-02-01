@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TeamsConnector
   class Builder
     attr_accessor :type, :content
@@ -15,8 +17,8 @@ module TeamsConnector
       @content = text
     end
 
-    def self.container
-      TeamsConnector::Builder.new { |entry| entry.container { |items| yield items } }
+    def self.container(&block)
+      TeamsConnector::Builder.new { |entry| entry.container(&block) }
     end
 
     def container
@@ -25,8 +27,8 @@ module TeamsConnector
       yield @content
     end
 
-    def self.facts
-      TeamsConnector::Builder.new { |entry| entry.facts { |facts| yield facts } }
+    def self.facts(&block)
+      TeamsConnector::Builder.new { |entry| entry.facts(&block) }
     end
 
     def facts
@@ -38,23 +40,37 @@ module TeamsConnector
     def result
       case @type
       when :container
-        {
-          type: "Container",
-          items: @content.map { |element| element.result }
-        }
+        result_container
       when :facts
-        {
-          type: "FactSet",
-          facts: @content.map { |fact| { title: fact[0], value: fact[1] } }
-        }
+        result_facts
       when :text
-        {
-          type: "TextBlock",
-          text: @content
-        }
+        result_text
       else
         raise TypeError, "The type #{@type} is not supported by the TeamsConnector::Builder"
       end
+    end
+
+    private
+
+    def result_container
+      {
+        type: 'Container',
+        items: @content.map(&:result)
+      }
+    end
+
+    def result_facts
+      {
+        type: 'FactSet',
+        facts: @content.map { |fact| { title: fact[0], value: fact[1] } }
+      }
+    end
+
+    def result_text
+      {
+        type: 'TextBlock',
+        text: @content
+      }
     end
   end
 end

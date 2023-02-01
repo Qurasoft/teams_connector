@@ -1,0 +1,15 @@
+Layout/LineLength:
+  Exclude:
+    - spec/**/*
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+    - '*.gemspec'
+
+Style/CaseEquality:
+  Exclude:
+    - lib/teams_connector/matchers/have_sent_notification_to.rb
+
+Style/Documentation:
+  Enabled: false
