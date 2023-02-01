@@ -90,10 +90,11 @@ RSpec.describe TeamsConnector::Configuration do
                                                         credentials_other: 'OTHER_TEST_URL'
                                                       })
         subject.load_from_rails_credentials
-        expect(subject.channels).to include(
-                                      { credentials_default: 'DEFAULT_TEST_URL' },
-                                      { credentials_other: 'OTHER_TEST_URL' }
-                                    )
+        channels = [
+          { credentials_default: 'DEFAULT_TEST_URL' },
+          { credentials_other: 'OTHER_TEST_URL' }
+        ]
+        expect(subject.channels).to include(*channels)
       end
     end
   end

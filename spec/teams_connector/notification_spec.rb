@@ -153,27 +153,27 @@ RSpec.describe TeamsConnector::Notification do
   end
 
   it 'pretty prints the template' do
-    pretty_printed_template = <<HEREDOC
-{
-  "@type": "MessageCard",
-  "@context": "http://schema.org/extensions",
-  "themeColor": "3f95b5",
-  "summary": "This is a test summary",
-  "sections": [
-    {
-      "markdown": true,
-      "activityTitle": "Quokka",
-      "activitySubtitle": "About the short-tailed scrub wallaby",
-      "facts": [
-        {
-          "name": "Fun fact",
-          "value": "Are always smiling and the 'happiest' animals on earth."
-        }
-      ]
-    }
-  ]
-}
-HEREDOC
+    pretty_printed_template = <<~HEREDOC
+      {
+        "@type": "MessageCard",
+        "@context": "http://schema.org/extensions",
+        "themeColor": "3f95b5",
+        "summary": "This is a test summary",
+        "sections": [
+          {
+            "markdown": true,
+            "activityTitle": "Quokka",
+            "activitySubtitle": "About the short-tailed scrub wallaby",
+            "facts": [
+              {
+                "name": "Fun fact",
+                "value": "Are always smiling and the 'happiest' animals on earth."
+              }
+            ]
+          }
+        ]
+      }
+    HEREDOC
     expect { subject.pretty_print }.to output(pretty_printed_template).to_stdout
   end
 end
