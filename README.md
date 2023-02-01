@@ -81,11 +81,11 @@ The default templates will be still available so you can mix and match.
 
 #### Default templates
 
-Template name | Description
------|-------
-:adaptive_card | A card with the body of an adaptive card for more complex scenarios
-:facts_card | A card with title, subtitle and a list of facts
-:test_card | A simple text message without any configurable content for testing
+| Template name  | Description                                                         |
+|----------------|---------------------------------------------------------------------|
+| :adaptive_card | A card with the body of an adaptive card for more complex scenarios |
+| :facts_card    | A card with title, subtitle and a list of facts                     |
+| :test_card     | A simple text message without any configurable content for testing  |
 
 #### Custom Templates
 
