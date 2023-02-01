@@ -5,6 +5,8 @@ module TeamsConnector
     class HaveSentNotificationTo
       include RSpec::Matchers::Composable
 
+      class RelativityNotSupported < StandardError; end
+
       def initialize(channel, template)
         @filter = {
           channel: channel,
@@ -78,19 +80,11 @@ module TeamsConnector
       end
 
       def matches?(expectation)
-        if Proc === expectation
-          original_count = TeamsConnector.testing.requests.size
-          expectation.call
-          in_block_notifications = TeamsConnector.testing.requests.drop(original_count)
-        else
-          in_block_notifications = expectation
+        matching_notifications = in_block_notifications(expectation).select do |msg|
+          @filter.map { |k, v| msg[k] == v unless v.nil? }.compact.all?
         end
 
-        in_block_notifications = in_block_notifications.select do |msg|
-          @filter.map { |k, v| msg[k] === v unless v.nil? }.compact.all?
-        end
-
-        check(in_block_notifications)
+        check(matching_notifications)
       end
 
       def supports_block_expectations?
@@ -101,27 +95,47 @@ module TeamsConnector
 
       def check(notifications)
         @matching_ntfcts, @unmatching_ntfcts = notifications.partition do |ntfct|
-          result = true
-
-          result &= ntfct[:template] == @template_data unless @template_data.nil?
-
-          decoded = JSON.parse(ntfct[:content])
-          if @data.nil? || @data === decoded
-            @block.call(decoded, ntfct)
-            result &= true
-          else
-            result = false
-          end
-
-          result
+          check_partition(ntfct)
         end
 
         @matching_count = @matching_ntfcts.size
 
+        check_result
+      end
+
+      def check_partition(ntfct)
+        result = true
+
+        result &= ntfct[:template] == @template_data unless @template_data.nil?
+
+        decoded = JSON.parse(ntfct[:content])
+        if @data.nil? || @data === decoded
+          @block.call(decoded, ntfct)
+          result &= true
+        else
+          result = false
+        end
+
+        result
+      end
+
+      def check_result
         case @expectation_type
         when :exactly then @expected_number == @matching_count
         when :at_most then @expected_number >= @matching_count
         when :at_least then @expected_number <= @matching_count
+        else
+          raise RelativityNotSupported
+        end
+      end
+
+      def in_block_notifications(expectation)
+        if expectation.is_a? Proc
+          original_count = TeamsConnector.testing.requests.size
+          expectation.call
+          TeamsConnector.testing.requests.drop(original_count)
+        else
+          expectation
         end
       end
 
@@ -152,6 +166,8 @@ module TeamsConnector
         when :exactly then 'exactly'
         when :at_most then 'at most'
         when :at_least then 'at least'
+        else
+          raise RelativityNotSupported
         end
       end
 
