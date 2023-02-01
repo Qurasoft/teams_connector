@@ -9,7 +9,7 @@ require 'teams_connector/builder'
 
 module TeamsConnector
   class << self
-    attr :configuration, :testing
+    attr_writer :configuration, :testing
   end
 
   def self.configuration

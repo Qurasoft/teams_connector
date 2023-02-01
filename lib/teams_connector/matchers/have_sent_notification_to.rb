@@ -137,11 +137,11 @@ module TeamsConnector
 
       def base_message
         msg = String("#{message_expectation_modifier} #{@expected_number} notifications")
-        msg << " to #{@filter[:channel]}" if @filter[:channel]
-        msg << " of #{@filter[:template]}" if @filter[:template]
-        msg << " with template #{@template_data}" if @template_data
-        msg << " with content #{data_description(@data)}" if @data
-        msg << ", but sent #{@matching_count}"
+        msg += " to #{@filter[:channel]}" if @filter[:channel]
+        msg += " of #{@filter[:template]}" if @filter[:template]
+        msg += " with template #{@template_data}" if @template_data
+        msg += " with content #{data_description(@data)}" if @data
+        msg += ", but sent #{@matching_count}"
 
         msg
       end
