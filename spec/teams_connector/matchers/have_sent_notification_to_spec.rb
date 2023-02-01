@@ -197,7 +197,6 @@ RSpec.describe TeamsConnector::Matchers::HaveSentNotificationTo do
         expect {}.not_to have_sent_notification_to(nil, :test_card)
       end
 
-
       it 'counts only notifications sent with the template' do
         expect {
           notification(:spec_card, :default)

@@ -1,5 +1,21 @@
 # frozen_string_literal: true
 
+class RailsTest
+  class Credentials
+    def self.teams_connector!; end
+  end
+
+  class Application
+    def self.credentials
+      RailsTest::Credentials
+    end
+  end
+
+  def self.application
+    RailsTest::Application
+  end
+end
+
 RSpec.describe TeamsConnector::Configuration do
   before do
     TeamsConnector.reset
@@ -66,23 +82,6 @@ RSpec.describe TeamsConnector::Configuration do
     end
 
     context 'available' do
-      class RailsTest
-        class Credentials
-          def self.teams_connector!
-          end
-        end
-
-        class Application
-          def self.credentials
-            RailsTest::Credentials
-          end
-        end
-
-        def self.application
-          RailsTest::Application
-        end
-      end
-
       it 'loads channels from credentials' do
         stub_const 'Rails', RailsTest
         allow(Rails.application.credentials).to receive(:"teams_connector!").and_return({

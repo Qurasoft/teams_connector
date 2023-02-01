@@ -39,10 +39,10 @@ RSpec.describe TeamsConnector::Notification do
   end
 
   context 'multiple channels' do
-    subject { TeamsConnector::Notification.new(template: :test_card, channels: [:other, :another]) }
+    subject { TeamsConnector::Notification.new(template: :test_card, channels: %i[other another]) }
     it 'initializes with multiple channels' do
       expect(subject).to have_attributes(template: :test_card)
-      expect(subject).to have_attributes(channels: [:other, :another])
+      expect(subject).to have_attributes(channels: %i[other another])
     end
 
     it 'delivers the message to all targets' do

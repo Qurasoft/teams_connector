@@ -35,19 +35,18 @@ module TeamsConnector
   end
 
   def self.project_root
-    if defined?(Rails)
-      return Rails.root
-    end
-
-    if defined?(Bundler)
-      return Bundler.root
-    end
+    return Rails.root if defined?(Rails)
+    return Bundler.root if defined?(Bundler)
 
     Dir.pwd
   end
 
   def self.gem_root
     spec = Gem::Specification.find_by_name('teams_connector')
-    spec.gem_dir rescue project_root
+    begin
+      spec.gem_dir
+    rescue NoMethodError
+      project_root
+    end
   end
 end

@@ -8,6 +8,6 @@ module TeamsConnector
       HaveSentNotificationTo.new(channel, template)
     end
 
-    alias_method :send_notification_to, :have_sent_notification_to
+    alias send_notification_to have_sent_notification_to
   end
 end

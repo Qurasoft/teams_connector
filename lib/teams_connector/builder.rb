@@ -17,8 +17,8 @@ module TeamsConnector
       @content = text
     end
 
-    def self.container
-      TeamsConnector::Builder.new { |entry| entry.container { |items| yield items } }
+    def self.container(&block)
+      TeamsConnector::Builder.new { |entry| entry.container(&block) }
     end
 
     def container
@@ -27,8 +27,8 @@ module TeamsConnector
       yield @content
     end
 
-    def self.facts
-      TeamsConnector::Builder.new { |entry| entry.facts { |facts| yield facts } }
+    def self.facts(&block)
+      TeamsConnector::Builder.new { |entry| entry.facts(&block) }
     end
 
     def facts
@@ -42,7 +42,7 @@ module TeamsConnector
       when :container
         {
           type: 'Container',
-          items: @content.map { |element| element.result }
+          items: @content.map(&:result)
         }
       when :facts
         {
