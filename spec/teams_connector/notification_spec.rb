@@ -26,7 +26,7 @@ RSpec.describe TeamsConnector::Notification do
   it 'delivers the message to the target' do
     subject.deliver_later
 
-    expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { "Content-Type": 'application/json' }
+    expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { 'Content-Type': 'application/json' }
     expect(WebMock).not_to have_requested :post, 'http://default'
   end
 
@@ -34,7 +34,7 @@ RSpec.describe TeamsConnector::Notification do
     TeamsConnector.configuration.always_use_default = true
     subject.deliver_later
 
-    expect(WebMock).to have_requested(:post, 'http://default').with headers: { "Content-Type": 'application/json' }
+    expect(WebMock).to have_requested(:post, 'http://default').with headers: { 'Content-Type': 'application/json' }
     expect(WebMock).not_to have_requested :post, 'http://localhost'
   end
 
@@ -48,8 +48,8 @@ RSpec.describe TeamsConnector::Notification do
     it 'delivers the message to all targets' do
       subject.deliver_later
 
-      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { "Content-Type": 'application/json' }
-      expect(WebMock).to have_requested(:post, 'http://another').with headers: { "Content-Type": 'application/json' }
+      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { 'Content-Type': 'application/json' }
+      expect(WebMock).to have_requested(:post, 'http://another').with headers: { 'Content-Type': 'application/json' }
       expect(WebMock).not_to have_requested :post, 'http://default'
     end
 
@@ -57,7 +57,7 @@ RSpec.describe TeamsConnector::Notification do
       TeamsConnector.configuration.always_use_default = true
       subject.deliver_later
 
-      expect(WebMock).to have_requested(:post, 'http://default').with headers: { "Content-Type": 'application/json' }
+      expect(WebMock).to have_requested(:post, 'http://default').with headers: { 'Content-Type': 'application/json' }
       expect(WebMock).not_to have_requested :post, 'http://localhost'
       expect(WebMock).not_to have_requested(:post, 'http://another')
     end
@@ -67,9 +67,9 @@ RSpec.describe TeamsConnector::Notification do
     it 'raises an error' do
       stub_request(:post, 'localhost').to_return(status: 400)
 
-      expect { subject.deliver_later }.to raise_error Net::HTTPServerException
+      expect { subject.deliver_later }.to raise_error Net::HTTPClientException
 
-      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { "Content-Type": 'application/json' }
+      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { 'Content-Type': 'application/json' }
       expect(WebMock).not_to have_requested :post, 'http://default'
     end
   end
@@ -107,7 +107,7 @@ RSpec.describe TeamsConnector::Notification do
     it 'delivers notifications' do
       subject.deliver_later
 
-      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { "Content-Type": 'application/json' }
+      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { 'Content-Type': 'application/json' }
       expect(WebMock).not_to have_requested :post, 'http://default'
     end
   end
@@ -147,7 +147,7 @@ RSpec.describe TeamsConnector::Notification do
     it 'falls back on bundled cards' do
       subject.deliver_later
 
-      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { "Content-Type": 'application/json' }
+      expect(WebMock).to have_requested(:post, 'http://localhost').with headers: { 'Content-Type': 'application/json' }
       expect(WebMock).not_to have_requested :post, 'http://default'
     end
   end
