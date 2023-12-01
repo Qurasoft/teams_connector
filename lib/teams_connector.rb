@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'core_ext/object'
 require 'teams_connector/configuration'
 require 'teams_connector/version'
 require 'teams_connector/notification'
