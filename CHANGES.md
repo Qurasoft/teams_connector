@@ -1,8 +1,9 @@
 # Teams Connector Changelog
 
-## Unreleased
+## 0.1.6
 - Enable Github actions for ruby 3
 - Enable Rubocop linting
+- Bump compatibility to sidekiq 7
 
 ## 0.1.5
 - RSpec Matchers for testing, thanks to [rspec-rails](https://github.com/rspec/rspec-rails) for their ActionCable `have_broadcasted_to` matcher as reference
