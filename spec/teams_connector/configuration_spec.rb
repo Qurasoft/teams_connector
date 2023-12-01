@@ -85,10 +85,10 @@ RSpec.describe TeamsConnector::Configuration do
       it 'loads channels from credentials' do
         stub_const 'Rails', RailsTest
         allow(Rails.application.credentials)
-          .to receive(:"teams_connector!").and_return({
-                                                        credentials_default: 'DEFAULT_TEST_URL',
-                                                        credentials_other: 'OTHER_TEST_URL'
-                                                      })
+          .to receive(:teams_connector!).and_return({
+                                                      credentials_default: 'DEFAULT_TEST_URL',
+                                                      credentials_other: 'OTHER_TEST_URL'
+                                                    })
         subject.load_from_rails_credentials
         channels = [
           { credentials_default: 'DEFAULT_TEST_URL' },

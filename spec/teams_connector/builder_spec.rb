@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe TeamsConnector::Builder do
-  subject { TeamsConnector::Builder.new {} }
+  subject { TeamsConnector::Builder.new { nil } }
 
   it 'is a builder' do
     is_expected.to be_a TeamsConnector::Builder

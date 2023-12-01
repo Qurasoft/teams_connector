@@ -42,7 +42,7 @@ RSpec.describe TeamsConnector::Matchers::HaveSentNotificationTo do
     end
 
     it 'passes when negated' do
-      expect {}.not_to sent_notification_to?(:default)
+      expect { nil }.not_to sent_notification_to?(:default)
     end
 
     it 'passes with multiple channels' do
@@ -99,7 +99,7 @@ RSpec.describe TeamsConnector::Matchers::HaveSentNotificationTo do
 
     it 'fails when notification is not sent' do
       expect do
-        expect {}.to sent_notification_to?(:default)
+        expect { nil }.to sent_notification_to?(:default)
       end.to raise_error(/expected to send exactly 1 notifications to default, but sent 0/)
     end
 
@@ -115,8 +115,7 @@ RSpec.describe TeamsConnector::Matchers::HaveSentNotificationTo do
     it 'reports correct number in fail error message' do
       notification(:test_card, :default)
       expect do
-        expect do
-        end.to sent_notification_to?(:default).exactly(1)
+        expect { nil }.to sent_notification_to?(:default).exactly(1)
       end.to raise_error(/expected to send exactly 1 notifications to default, but sent 0/)
     end
 
@@ -200,7 +199,7 @@ RSpec.describe TeamsConnector::Matchers::HaveSentNotificationTo do
       end
 
       it 'passes when negated' do
-        expect {}.not_to sent_notification_to?(nil, :test_card)
+        expect { nil }.not_to sent_notification_to?(nil, :test_card)
       end
 
       it 'counts only notifications sent with the template' do
